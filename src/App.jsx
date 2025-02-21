@@ -17,7 +17,7 @@ const App = () => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         try {
-          await axios.post("http://localhost:5000/api/users", {
+          await axios.post(`${import.meta.VITE_API_URL}/api/users`, {
             uid: user.uid,
             email: user.email,
             displayName: user.displayName,

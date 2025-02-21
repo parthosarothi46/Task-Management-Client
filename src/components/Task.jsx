@@ -63,7 +63,9 @@ const Task = ({
 
     // Update the backend with the new task title
     axios
-      .put(`http://localhost:5000/api/tasks/${taskId}`, { title: newTitle })
+      .put(`${import.meta.VITE_API_URL}/api/tasks/${taskId}`, {
+        title: newTitle,
+      })
       .then((response) => {
         console.log("Task title updated:", response.data);
       })
