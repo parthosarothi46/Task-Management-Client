@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { format, isPast, isToday } from "date-fns";
-import axios from "axios"; // Assuming you use axios for API calls
+import axiosInstance from "../utils/axiosInstance";
 
 const Task = ({
   task,
@@ -62,8 +62,8 @@ const Task = ({
     setTasks(updatedTasks);
 
     // Update the backend with the new task title
-    axios
-      .put(`${import.meta.VITE_API_URL}/api/tasks/${taskId}`, {
+    axiosInstance
+      .put(`/api/tasks/${taskId}`, {
         title: newTitle,
       })
       .then((response) => {

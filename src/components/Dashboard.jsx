@@ -3,10 +3,10 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import { auth } from "../firebase";
-import axios from "axios";
 import TaskList from "./TaskList";
 import AddTaskForm from "./AddTaskForm";
 import ActivityLog from "./ActivityLog";
+import axiosInstance from "../utils/axiosInstance";
 
 const Dashboard = ({ user, darkMode, toggleDarkMode }) => {
   const [tasks, setTasks] = useState([]);
@@ -15,9 +15,7 @@ const Dashboard = ({ user, darkMode, toggleDarkMode }) => {
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.VITE_API_URL}/api/tasks/${user.uid}`
-      );
+      const response = await axiosInstance.get(`/api/tasks/${user.uid}`);
       setTasks(response.data);
     } catch (error) {
       console.error("Error fetching tasks:", error);
@@ -26,14 +24,11 @@ const Dashboard = ({ user, darkMode, toggleDarkMode }) => {
 
   const addTask = async (newTask) => {
     try {
-      const response = await axios.post(
-        `${import.meta.VITE_API_URL}/api/tasks`,
-        {
-          ...newTask,
-          userId: user.uid,
-          timestamp: new Date().toISOString(),
-        }
-      );
+      const response = await axiosInstance.post(`/api/tasks`, {
+        ...newTask,
+        userId: user.uid,
+        timestamp: new Date().toISOString(),
+      });
       setTasks([...tasks, response.data]);
       addToActivityLog(`Task "${newTask.title}" added to ${newTask.category}`);
     } catch (error) {
@@ -44,10 +39,7 @@ const Dashboard = ({ user, darkMode, toggleDarkMode }) => {
   const updateTask = async (taskId, updatedTask) => {
     try {
       // Send the request to update the task in the backend
-      await axios.put(
-        `${import.meta.VITE_API_URL}/api/tasks/${taskId}`,
-        updatedTask
-      );
+      await axiosInstance.put(`/api/tasks/${taskId}`, updatedTask);
 
       // Update only the changed task in the local state
       setTasks((prevTasks) =>
@@ -65,7 +57,7 @@ const Dashboard = ({ user, darkMode, toggleDarkMode }) => {
 
   const deleteTask = async (taskId) => {
     try {
-      await axios.delete(`${import.meta.VITE_API_URL}/api/tasks/${taskId}`);
+      await axiosInstance.delete(`/api/tasks/${taskId}`);
       const deletedTask = tasks.find((task) => task._id === taskId);
       setTasks(tasks.filter((task) => task._id !== taskId));
       addToActivityLog(`Task "${deletedTask?.title}" deleted`);
@@ -80,7 +72,7 @@ const Dashboard = ({ user, darkMode, toggleDarkMode }) => {
 
     try {
       // Send request to update the task category in the database
-      await axios.put(`${import.meta.VITE_API_URL}/api/tasks/move/${taskId}`, {
+      await axiosInstance.put(`/api/tasks/move/${taskId}`, {
         category: newCategory,
       });
 

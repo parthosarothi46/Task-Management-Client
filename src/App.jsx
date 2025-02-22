@@ -3,7 +3,7 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { auth } from "./firebase";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
-import axios from "axios";
+import axiosInstance from "./utils/axiosInstance";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -17,7 +17,7 @@ const App = () => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         try {
-          await axios.post(`${import.meta.VITE_API_URL}/api/users`, {
+          await axiosInstance.post("/api/users", {
             uid: user.uid,
             email: user.email,
             displayName: user.displayName,
